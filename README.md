@@ -1,6 +1,6 @@
 ### For Development
 1. Ensure you have python 3.8
-2. Run [setupVenv.sh](setupVenv.sh)
+2. Run the command "`source`[setupVenv.sh](setupVenv.sh)"
 3. Spawn another terminal and run `ngrok http 5000`
 4. Update the ngrok link in Twilio Console(username + password with @fabhi)
 5. Run `python3 server.py`
