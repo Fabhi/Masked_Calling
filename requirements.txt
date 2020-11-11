@@ -4,3 +4,4 @@ flask-inputs==0.3.0
 jsonschema==3.0.1
 twilio==6.47.0
 jsonify==0.5
+mysql-connector-python==8.0.22
