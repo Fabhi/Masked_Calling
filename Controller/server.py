@@ -27,7 +27,9 @@ def call():
 # Used by App to initialize a session
 @app.route('/init_session', methods=['GET', 'POST'])
 def initialize():
-    SID = request.form['SID']
+    SID = int(request.form['SID'])
+    customer = request.form['customer']
+    driver = request.form['driver']
 
     '''TODO:
     1. Create a new entry in Sessions Table
@@ -35,31 +37,35 @@ def initialize():
     3. Create a new entry (SID, TWILIO_NUMBER) in used_by Relation
     4. Create a response dictionary and jsonify it
     '''
-    return initSession(SID)
-
+    response = initSession(SID, driver, customer)
+    assert type(response) is dict
+    return jsonify(response)
 
 # Used by App to terminate an ongoing session
 @app.route('/terminate_session', methods=['GET', 'POST'])
 def terminate():
-    SID = request.form['SID']
+    SID = int(request.form['SID'])
 
     '''TODO:
     1. Delete the SID from the Sessions Table
     2. Delete the entry (SID, TWILIO_NUMBER) in used_by Relation
     3. Create a response dictionary and jsonify it
     '''
-    return terminateSession(SID)
-
+    response = terminateSession(SID)
+    assert type(response) is dict
+    return jsonify(response)
 # Used by App to find the TWILIO_NUMBER associated with a SID
 @app.route('/mask_number', methods=['GET', 'POST'])
 def query():
-    SID = request.form['SID']
+    SID = int(request.form['SID'])
 
     '''TODO:
     1. Query the used_by relation to find the TWILIO_NUMBER used by SID
     2. Create a response dictionary and jsonify it
     '''
-    return querySession(SID)
+    response = querySession(SID)
+    assert type(response) is dict
+    return jsonify(response)
 
 def main():
     app.run()
