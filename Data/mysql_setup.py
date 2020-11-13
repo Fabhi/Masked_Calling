@@ -12,14 +12,12 @@ try:
                                    database="mydatabase")
 
     mycursor = mydb.cursor()
-    mycursor.execute("drop table if exists `Twilio_Numbers`;")
-    mycursor.execute("create table `Twilio_Numbers`(`Number` varchar(15) primary key);")
+    mycursor.execute("create table if not exists`Twilio_Numbers`(`Number` varchar(15) primary key);")
 
-    mycursor.execute("drop table if exists `Session`;")
-    mycursor.execute("create table `Session`(`SID` int primary key, `Customer_No` int, `Driver_No` int, `Last_Update` datetime);")
+    mycursor.execute("create table if not exists`Session`(`SID` int primary key, `Customer_No` int NOT NULL, `Driver_No` int NOT NULL, `Last_Update` datetime NOT NULL);")
 
-    mycursor.execute("drop table if exists `Used_By`;")
-    mycursor.execute("create table `Used_By`(`SID` int, `Number` varchar(15), foreign key(`SID`) references Session(`SID`), foreign key(`Number`) references Twilio_Numbers(`Number`));")
+    mycursor.execute("create table if not exists `Used_By`(`SID` int NOT NULL, `Number` varchar(15) NOT NULL, foreign key(`SID`) references Session(`SID`), foreign key(`Number`) references Twilio_Numbers(`Number`));")
+
 
     mydb.commit()
 
