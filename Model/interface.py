@@ -9,15 +9,14 @@ queries = {"init_session":("INSERT INTO Session(SID, Customer_No, Driver_No, Las
                                   "UPDATE Twilio_Numbers SET used = 0 where Number=@numb;"
                                   "delete from Used_By where SID=%(SID)s;"),
            "get_number":("Select Number from Used_By where SID = %(SID)s;")}
-
-def getErrorObject(code, message):
+def getErrorObject(code, message,):
     # template = "An exception of type {0} occurred on the server."
     # message = template.format(type(ex).__name__)
     return {"responseCode": str(code), "response" : str(message)}
 
-def getNumbers(params):
+def getNumbers(params, creds):
     try:
-        conn = mysql.connector.connect(host="localhost", user="root", password="root", database="JCO")
+        conn = mysql.connector.connect(**creds)
         curr = conn.cursor()
         query = ("Select Customer_No, Driver_No from Session where SID=(select SID from Used_By where Number=%(mask)s);")
         curr.execute(query,params)
@@ -30,13 +29,13 @@ def getNumbers(params):
     finally:
         #closing database connection.
         if(conn.is_connected()):
-            mycursor.close()
+            curr.close()
             conn.close()
             print("connection is closed")
 
-def performDB(operation, params):
+def performDB(operation, params, creds):
     try:
-        conn = mysql.connector.connect(host="localhost", user="root", password="root", database="JCO")
+        conn = mysql.connector.connect(**creds)
         curr = conn.cursor()
         print(params)
         query = queries[operation]
@@ -56,7 +55,7 @@ def performDB(operation, params):
         #closing database connection.
         try:
             if(conn.is_connected()):
-                mycursor.close()
+                curr.close()
                 conn.close()
                 print("connection is closed")
         except NameError as e:

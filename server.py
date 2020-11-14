@@ -2,7 +2,7 @@ from Model.interface import performDB
 from Model.interface import getNumbers
 from flask import Flask, request, jsonify
 from twilio.twiml.voice_response import Gather, VoiceResponse
-
+from Data.creds import creds
 app = Flask(__name__)
 
 @app.route("/test", methods=['GET', 'POST'])
@@ -23,7 +23,7 @@ def call():
     1. Find SID of interface number stored in mask
     2. Update CUSTOMER and DRIVER'''
 
-    (DRIVER,CUSTOMER) = getNumbers({'mask':mask})
+    (DRIVER,CUSTOMER) = getNumbers({'mask':mask}, creds)
     response = VoiceResponse()
     if caller == CUSTOMER:  # if the customer is calling
         response.say("Please wait while we contact the driver")
@@ -49,7 +49,7 @@ def initialize():
     3. Create a new entry (SID, TWILIO_NUMBER) in used_by Relation
     4. Create a response dictionary and jsonify it
     '''
-    response = performDB(request.url_rule.rule[1:],{'SID':SID,'driver':driver,'customer': customer})
+    response = performDB(request.url_rule.rule[1:],{'SID':SID,'driver':driver,'customer': customer}, creds)
     assert type(response) is dict
     return jsonify(response)
 
@@ -64,7 +64,7 @@ def terminate():
     2. Delete the entry (SID, TWILIO_NUMBER) in used_by Relation
     3. Create a response dictionary and jsonify it
     '''
-    response = performDB(request.url_rule.rule[1:], {'SID':SID})
+    response = performDB(request.url_rule.rule[1:], {'SID':SID}, creds)
     assert type(response) is dict
     return jsonify(response)
 # Used by App to find the TWILIO_NUMBER associated with a SID
@@ -77,12 +77,12 @@ def query():
     1. Query the used_by relation to find the TWILIO_NUMBER used by SID
     2. Create a response dictionary and jsonify it
     '''
-    response = performDB(request.url_rule.rule[1:], {'SID':SID})
+    response = performDB(request.url_rule.rule[1:], {'SID':SID}, creds)
     assert type(response) is dict
     return jsonify(response)
 
 def main():
-    app.run()
+    app.run(host="0.0.0.0")
 
 if __name__ == '__main__':
     main()
