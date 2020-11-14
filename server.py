@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 @app.route("/test", methods=['GET', 'POST'])
 def index() -> str:
-    if request.method == 'POST':
-        test = request.form.get('returnMe')
-        # transform a dict into an application/json response 
-        return jsonify({"message": "It Works", 'value':test})
+    test = request.form.get('returnMe')
+    # transform a dict into an application/json response 
+    return jsonify({"message": "It Works", 'value':test})
+
 
 # Used by Twilio Servers to transfer the call to correct recipient
 @app.route('/twilio/call', methods=['GET', 'POST'])
