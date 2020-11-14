@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
+
 queries = {"init_session":("INSERT INTO Session(SID, Customer_No, Driver_No, Last_Update) VALUES (%(SID)s, %(customer)s, %(driver)s, NOW());"
                               "SELECT Number into @numb from Twilio_Numbers where used <> 1 order by RAND() limit 1;"
                               "UPDATE Twilio_Numbers SET used = 1 where Number=@numb;"
@@ -9,10 +10,14 @@ queries = {"init_session":("INSERT INTO Session(SID, Customer_No, Driver_No, Las
                                   "UPDATE Twilio_Numbers SET used = 0 where Number=@numb;"
                                   "delete from Used_By where SID=%(SID)s;"),
            "get_number":("Select Number from Used_By where SID = %(SID)s;")}
+
+
 def getErrorObject(code, message,):
     # template = "An exception of type {0} occurred on the server."
     # message = template.format(type(ex).__name__)
     return {"responseCode": str(code), "response" : str(message)}
+
+
 
 def getNumbers(params, creds):
     try:
