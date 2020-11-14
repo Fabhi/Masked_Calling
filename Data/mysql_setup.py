@@ -8,15 +8,17 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 try:
     mydb = mysql.connector.connect(host="localhost",
                                    user="root",
-                                   password="root",
-                                   database="mydatabase")
-
+                                   password="root")
     mycursor = mydb.cursor()
-    mycursor.execute("create table if not exists`Twilio_Numbers`(`Number` varchar(15) primary key);")
-
-    mycursor.execute("create table if not exists`Session`(`SID` int primary key, `Customer_No` int NOT NULL, `Driver_No` int NOT NULL, `Last_Update` datetime NOT NULL);")
-
-    mycursor.execute("create table if not exists `Used_By`(`SID` int NOT NULL, `Number` varchar(15) NOT NULL, foreign key(`SID`) references Session(`SID`), foreign key(`Number`) references Twilio_Numbers(`Number`));")
+    mycursor.execute("CREATE DATABASE if not exists `JCO`")
+    mydb = mysql.connector.connect(host="localhost",
+                                   user="root",
+                                   password="root",
+                                   database="jco")
+    mycursor = mydb.cursor()
+    mycursor.execute("create table if not exists `Twilio_Numbers`(`Number` varchar(15) primary key, `used` int DEFAULt 0);")
+    mycursor.execute("create table if not exists `Session`(`SID` int primary key, `Customer_No` varchar(15) NOT NULL, `Driver_No` varchar(15) NOT NULL, `Last_Update` datetime NOT NULL);")
+    mycursor.execute("create table if not exists `Used_By`(`SID` int NOT NULL, `Number` varchar(15) NOT NULL);")
 
 
     mydb.commit()
