@@ -1,8 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 from mysql.connector import errorcode
-from creds import creds
-def initDB():
+def initDB(creds):
     try:
         mydb = mysql.connector.connect(**creds)
         mycursor = mydb.cursor()

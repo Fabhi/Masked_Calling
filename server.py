@@ -103,7 +103,7 @@ def query():
 # Management Callbacks
 @app.route('/initDB', methods=["GET", "POST"])
 def initDatabase():
-    response = initDB()
+    response = initDB(creds)
     return jsonify({"response": response})
 
 @app.route('/getLogs', methods=["GET", "POST"])
