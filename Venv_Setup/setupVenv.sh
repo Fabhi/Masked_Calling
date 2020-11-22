@@ -15,6 +15,8 @@ sudo apt install -y python3-venv
 printf "${yel}Installed/updated VENV\n${end}"
 sudo apt install -y python3-pip
 printf "${yel}Installed/updated PIP\n${end}"
+sudo apt install -y nginx
+printf "${yel}Installed/updated Nginx\n${end}"
 
 # Create a new virtual environment
 OLDPWD=$PWD
