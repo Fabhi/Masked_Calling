@@ -2,9 +2,9 @@ import threading
 from flask import Flask, request, jsonify, send_file
 from twilio.twiml.voice_response import Gather, VoiceResponse
 
-from Model.interface import *
-from Data.setup import initDB
-from Data.creds import creds
+from model.interface import *
+from data.setup import initDB
+from data.creds import creds
 
 
 app = Flask(__name__)
@@ -19,7 +19,7 @@ def homepage():
 @app.route("/test", methods=['GET', 'POST'])
 def index() -> str:
     test = request.form.get('returnMe')
-    # transform a dict into an application/json response 
+    # transform a dict into an application/json response
     return jsonify({"message": "It Works", 'value':test})
 
 
@@ -46,11 +46,11 @@ def call():
         return jsonify({"responseCode": 900,"response": "Insufficient Parameters! Please refer to documents"})
 
     wasConnected, callerType, connectedTo = True, "", ""
-    
+
     (DRIVER,CUSTOMER) = getNumbers({'mask':mask}, creds)
     # (CUSTOMER,DRIVER) = ("+919611139444", "+918660817513")
     response = VoiceResponse()
-    
+
     if caller == CUSTOMER:  # if the customer is calling
         response.say("Hello Traveller. Welcome to Rent Oh! Please wait while we connect you to your driver")
         response.dial(DRIVER, mask)
