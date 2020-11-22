@@ -1,1 +1,1 @@
-sudo nohup /home/ubuntu/python-venvs/masked_calling_venv/bin/python3 /home/ubuntu/JCO/Masked_Calling/server.py > log.txt 2>&1 &
+sudo nohup /home/ubuntu/python-venvs/masked_calling_venv/bin/python3 /home/ubuntu/JCO/Masked_Calling/server.py > log.txt 2>&1 chm&

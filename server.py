@@ -8,7 +8,11 @@ from Data.creds import creds
 
 
 app = Flask(__name__)
-
+@app.route("/")
+def homepage():
+    return """
+    <h1>JCO Masked Calling Microservice</h1>
+    """
 
 
 # Used for Testing
