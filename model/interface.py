@@ -5,7 +5,7 @@ queries = {"init_session":("INSERT INTO Session(SID, Customer_No, Driver_No, Las
                               "SELECT Number into @numb from Twilio_Numbers where used <> 1 order by RAND() limit 1;"
                               "UPDATE Twilio_Numbers SET used = 1 where Number=@numb;"
                               "INSERT INTO Used_By(SID, Number) VALUES (%(SID)s, @numb);"),
-           "terminate_session":("delete from session where SID=%(SID)s;"
+           "terminate_session":("delete from Session where SID=%(SID)s;"
                                   "Select Number into @numb from Used_By where SID=%(SID)s;"
                                   "UPDATE Twilio_Numbers SET used = 0 where Number=@numb;"
                                   "delete from Used_By where SID=%(SID)s;"),
@@ -19,18 +19,18 @@ def getErrorObject(code, message,):
 
 
 
-def getNumbers(params, creds):
+def getNumbers(params, creds, logger):
     try:
         conn = mysql.connector.connect(**creds)
         curr = conn.cursor()
         query = ("Select Customer_No, Driver_No from Session where SID=(select SID from Used_By where Number=%(mask)s);")
         curr.execute(query,params)
-        conn.commit()
-        if(curr.rowcount == 0):
-            raise Exception
-        return curr.fetchone()
-    except Exception as e:
-        return ("0","0")
+        rows = curr.fetchall()
+        if not rows:
+            return ("0","0")
+        return rows[0]
+    except:
+        logger.error(e)
     finally:
         #closing database connection.
         if(conn.is_connected()):

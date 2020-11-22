@@ -1,6 +1,7 @@
 import threading
 from flask import Flask, request, jsonify, send_file
 from twilio.twiml.voice_response import Gather, VoiceResponse
+import logging
 
 from model.interface import *
 from data.setup import initDB
@@ -41,28 +42,29 @@ def writeLog(caller, mask, wasConnected=False, callerType="", connectedTo=""):
 def call():
     caller = request.form.get('From') #Contains the number of the caller
     mask = request.form.get('To') #Contains the twilio number that was called
-    print(caller, mask)
     if not (caller and mask):
         return jsonify({"responseCode": 900,"response": "Insufficient Parameters! Please refer to documents"})
 
     wasConnected, callerType, connectedTo = True, "", ""
 
-    (DRIVER,CUSTOMER) = getNumbers({'mask':mask}, creds)
+    (DRIVER,CUSTOMER) = getNumbers({'mask':mask}, creds, app.logger)
     # (CUSTOMER,DRIVER) = ("+919611139444", "+918660817513")
     response = VoiceResponse()
-
+    app.logger.error(caller)
+    app.logger.error(CUSTOMER)
+    app.logger.error(DRIVER)
     if caller == CUSTOMER:  # if the customer is calling
         response.say("Welcome to Rent O. Please wait while we connect you to your driver")
-        response.dial(DRIVER, mask)
+        response.dial(DRIVER, caller_id=mask)
         callerType = "Customer"
         connectedTo = DRIVER
     elif caller == DRIVER:  # if driver is calling
         response.say("Welcome to Rent O. Please wait while we connect you to your customer")
-        response.dial(CUSTOMER, mask)
+        response.dial(CUSTOMER, caller_id=mask)
         callerType = "Driver"
         connectedTo = CUSTOMER
     else: #Every other number
-        response.say("Welcome to Rent O. This call is invalid. This trip is over or does not exist. Please contact Rent O for any inquiries.", voice="man")
+        response.say("Welcome to Rent O. This call is invalid. This trip is over. Or does not exist. Please contact Rent O for any inquiries.", voice="man")
         wasConnected = False
     threading.Thread(target = writeLog, args = (caller, mask, wasConnected, callerType, connectedTo)).start()
     return str(response)
@@ -114,6 +116,11 @@ def initDatabase():
 def sendLogs():
     return send_file("calls.log")
 
+if __name__ != '__main__':
+    # if we are not running directly, we set the loggers
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
