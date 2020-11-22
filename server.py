@@ -52,17 +52,17 @@ def call():
     response = VoiceResponse()
     
     if caller == CUSTOMER:  # if the customer is calling
-        response.say("Hello Traveller. Welcome to Rent Oh! Please wait while we connect you to your driver")
+        response.say("Welcome to Rent O. Please wait while we connect you to your driver")
         response.dial(DRIVER, mask)
         callerType = "Customer"
         connectedTo = DRIVER
     elif caller == DRIVER:  # if driver is calling
-        response.say("Hello Traveller. Welcome to Rent Oh! Please wait while we connect you to your customer")
+        response.say("Welcome to Rent O. Please wait while we connect you to your customer")
         response.dial(CUSTOMER, mask)
         callerType = "Driver"
         connectedTo = CUSTOMER
     else: #Every other number
-        response.say("Hello Traveller. Welcome to Rent Oh! Unfortunately This call is invalid. This trip is over or does not exist. Please contact Rent Oh for any inquiries.", voice="man")
+        response.say("Welcome to Rent O. This call is invalid. This trip is over or does not exist. Please contact Rent O for any inquiries.", voice="man")
         wasConnected = False
     threading.Thread(target = writeLog, args = (caller, mask, wasConnected, callerType, connectedTo)).start()
     return str(response)
